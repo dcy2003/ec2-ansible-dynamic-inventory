@@ -93,6 +93,7 @@
 		        					"Ref" : "AWS::Region"
 		        				},
 		        				"/' /etc/ansible/ec2.ini\n",
+		        				"sed -i '17s/.*/#regions_exclude = us-gov-west-1, cn-north-1/' /etc/ansible/ec2.ini\n",
 		        				"sed -i '32s/.*/destination_variable = private_dns_name/' /etc/ansible/ec2.ini\n",
 		        				"sed -i '48s/.*/vpc_destination_variable = private_ip_address/' /etc/ansible/ec2.ini\n",
 		        				"sed -i '70s/.*/rds = False/' /etc/ansible/ec2.ini\n",
