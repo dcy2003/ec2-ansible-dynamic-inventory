@@ -72,7 +72,8 @@
 		        				},
 		        				"\n",
 		        				"chmod +x /etc/ansible/ec2.py\n",
-		        				"sed -i '14s/.*/inventory = \/etc\/ansible\/hosts/' /etc/ansible/ansible.cfg\n",
+		        				"sed -i '14s/.*/inventory = \/etc\/ansible\/ec2.py/' /etc/ansible/ansible.cfg\n",
+		        				"rm -f /etc/ansible/hosts\n",
 		        				"sed -i '21s/.*/sudo_user = root/' /etc/ansible/ansible.cfg"
 		        			]
 		        		]
