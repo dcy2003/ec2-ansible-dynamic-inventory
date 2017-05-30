@@ -26,6 +26,11 @@
 	    	"Type" : "String",
 	    	"Default" : "https://raw.githubusercontent.com/ansible/ansible/devel/contrib/inventory/ec2.py"
 	    },
+	    "Ec2ExternalInventoryConfigUrl" : {
+	    	"Description" : "URL of EC2 external inventory config file",
+	    	"Type" : "String",
+	    	"Default" : "https://raw.githubusercontent.com/ansible/ansible/devel/contrib/inventory/ec2.ini"
+	    },
         "AnsibleNodeInstanceProfileName" : {
             "Description" : "Name of pre-existing instance profile for Ansible node",
             "Type" : "String"
@@ -38,73 +43,6 @@
 	"Resources" : {
 		"AnsibleNode" : {
 			"Type" : "AWS::EC2::Instance",
-			"Metadata" : {
-				"AWS::CloudFormation::Init" : {
-					"config" : {
-						"files" : {
-							"/etc/ansible/ec2.ini" : {
-								"content" : { 
-									"Fn::Join" : [
-										"", 
-										[
-					                		"[ec2]\n",
-					                		"regions = ",
-					                		{
-					                			"Ref" : "AWS::Region"
-					                		},
-					                		"\n",
-					                		"destination_variable = private_dns_name\n",
-					                		"vpc_destination_variable = private_ip_address\n",
-					                		"route53 = False\n",
-					                		"rds = False\n",
-					                		"elasticache = False\n",
-					                		"all_instances = False\n",
-					                		"all_rds_instances = False\n",
-					                		"include_rds_clusters = False\n",
-					                		"all_elasticache_replication_groups = False\n",
-					                		"all_elasticache_clusters = False\n",
-					                		"all_elasticache_nodes = False\n",
-					                		"cache_path = ~/.ansible/tmp\n",
-					                		"cache_max_age = 0\n",
-					                		"nested_groups = False\n",
-					                		"replace_dash_in_groups = True\n",
-					                		"expand_csv_tags = False\n",
-					                		"group_by_instance_id = True\n",
-					                		"group_by_region = False\n",
-					                		"group_by_availability_zone = True\n",
-					                		"group_by_aws_account = False\n",
-					                		"group_by_ami_id = True\n",
-					                		"group_by_instance_type = True\n",
-					                		"group_by_instance_state = False\n",
-					                		"group_by_key_pair = True\n",
-					                		"group_by_vpc_id = True\n",
-					                		"group_by_security_group = True\n",
-					                		"group_by_tag_keys = True\n",
-					                		"group_by_tag_none = True\n",
-					                		"group_by_route53_names = False\n",
-					                		"group_by_rds_engine = False\n",
-					                		"group_by_rds_parameter_group = False\n",
-					                		"group_by_elasticache_engine = False\n",
-					                		"group_by_elasticache_cluster = False\n",
-					                		"group_by_elasticache_parameter_group = False\n",
-					                		"group_by_elasticache_replication_group = False\n",
-					                		"stack_filters = False\n",
-					                		"iam_role = ",
-					                		{
-					                			"Ref" : "AnsibleNodeIamRoleArn"
-					                		},
-					                		"\n"
-					                	]
-				                	]
-				                },
-								"mode" : "000644",
-								"owner" : "root",
-								"group" : "root"
-							}
-						}
-					}
-				}
-			},
 			"Properties" : {
 				"ImageId" : {
 					"Ref" : "AmiId"
@@ -143,10 +81,38 @@
 		        					"Ref" : "Ec2ExternalInventoryScriptUrl"
 		        				},
 		        				"\n",
+		        				"wget -O /etc/ansible/ec2.ini ",
+		        				{
+		        					"Ref" : "Ec2ExternalInventoryConfigUrl"
+		        				},
+		        				"\n",
 		        				"chmod +x /etc/ansible/ec2.py\n",
+		        				"chmod 644 /etc/ansible/ec2.ini\n",
+		        				"sed -i '16s/.*/regions = ",
+		        				{
+		        					"Ref" : "AWS::Region"
+		        				},
+		        				"/' /etc/ansible/ec2.ini\n",
+		        				"sed -i '32s/.*/destination_variable = private_dns_name/' /etc/ansible/ec2.ini\n",
+		        				"sed -i '48s/.*/vpc_destination_variable = private_ip_address/' /etc/ansible/ec2.ini\n",
+		        				"sed -i '70s/.*/rds = False/' /etc/ansible/ec2.ini\n",
+		        				"sed -i '73s/.*/elasticache = False/' /etc/ansible/ec2.ini\n",
+		        				"sed -i '117s/.*/cache_max_age = 0/' /etc/ansible/ec2.ini\n",
+		        				"sed -i '143s/.*/group_by_route53_names = False/' /etc/ansible/ec2.ini\n",
+		        				"sed -i '144s/.*/group_by_rds_engine = False/' /etc/ansible/ec2.ini\n",
+		        				"sed -i '145s/.*/group_by_rds_parameter_group = False/' /etc/ansible/ec2.ini\n",
+		        				"sed -i '146s/.*/group_by_elasticache_engine = False/' /etc/ansible/ec2.ini\n",
+		        				"sed -i '147s/.*/group_by_elasticache_cluster = False/' /etc/ansible/ec2.ini\n",
+		        				"sed -i '148s/.*/group_by_elasticache_parameter_group = False/' /etc/ansible/ec2.ini\n",
+		        				"sed -i '149s/.*/group_by_elasticache_replication_group = False/' /etc/ansible/ec2.ini\n",
+		        				"sed -i '186s/.*/iam_role = ",
+		        				{
+		        					"Ref" : "AnsibleNodeIamRoleArn"
+		        				},
+		        				"/' /etc/ansible/ec2.ini\n",
 		        				"sed -i '14s/.*/inventory = \\/etc\\/ansible\\/ec2.py/' /etc/ansible/ansible.cfg\n",
 		        				"rm -f /etc/ansible/hosts\n",
-		        				"sed -i '21s/.*/sudo_user = root/' /etc/ansible/ansible.cfg"
+		        				"sed -i '21s/.*/sudo_user = root/' /etc/ansible/ansible.cfg\n"
 		        			]
 		        		]
 		        	}
