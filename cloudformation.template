@@ -38,6 +38,10 @@
         "AnsibleNodeIamRoleArn" : {
         	"Description" : "ARN of IAM role to be assigned to Ansible node",
         	"Type" : "String"
+        },
+        "SubnetId" : {
+        	"Description" : "Subnet to launch instance into",
+        	"Type" : "AWS::EC2::Subnet::Id"
         }
 	},
 	"Resources" : {
@@ -64,6 +68,9 @@
 						"Value" : "Ansible Node"
 					}
 				],
+				"SubnetId" : {
+					"Ref" : "SubnetId"
+				},
 	    		"IamInstanceProfile" : {
 	    			"Ref" : "AnsibleNodeInstanceProfileName"
 	    		},
